@@ -1,10 +1,11 @@
 #!/bin/bash
-#################################################################################
-#	MIRROR Backup de les dades de NETETA assumint:					#
-#NO es fa còpia de Qmultimedia							#
-#Mirror permanent de Qfotos
-#Mirror permanent de Qprogs (pentent)
-#BACKUPs circulars (Setmanals i Mensuals) de Qdocs i Qdisk (pendent)
+#########################################################
+# MIRROR NAS SERVER to LOCAL DISK BACKUP		#
+# 							#
+# 2 SOURCES (FOTOS and PROGS) 				#
+# Author: Sefanitro					#
+#########################################################
+
 
 unset PATH #Es recomana per evitar mals usos
 
