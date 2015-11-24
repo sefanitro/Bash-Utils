@@ -65,14 +65,18 @@ fi;
 # step 1: mv the oldest snapshot, to a temp directory
 # instead of descarting the old one, we will used to create the new one backup. Much faster than discarting and creating from zero.
 if [ -d $DESTDOCS/setmanal.2 ] ; then { $RM -rf $DESTDOCS/setmanal.2 ; } fi
+if [ -d $DESTDISK/setmanal.2 ] ; then { $RM -rf $DESTDISK/setmanal.2 ; } fi
 
 # step 2: shift the middle snapshots(s) back by one, if they exist
 if [ -d $DESTDOCS/setmanal.1 ] ; then { $MV $DESTDOCS/setmanal.1 $DESTDOCS/setmanal.2 ; } fi
 if [ -d $DESTDOCS/setmanal.0 ] ; then { $MV $DESTDOCS/setmanal.0 $DESTDOCS/setmanal.1 ; } fi
+if [ -d $DESTDISK/setmanal.1 ] ; then { $MV $DESTDISK/setmanal.1 $DESTDISK/setmanal.2 ; } fi
+if [ -d $DESTDISK/setmanal.0 ] ; then { $MV $DESTDISK/setmanal.0 $DESTDISK/setmanal.1 ; } fi
 
 # step 3: make a hard-link-only (except for dirs) copy of the latest snapshot,
 # if that exists
 if [ -d $DESTDOCS/diari.2 ] ; then { $CP -al $DESTDOCS/diari.2 $DESTDOCS/setmanal.0 ; } fi
+if [ -d $DESTDISK/diari.2 ] ; then { $CP -al $DESTDISK/diari.2 $DESTDISK/setmanal.0 ; } fi
 
 $MOUNT -o remount,ro $MOUNT_DEVICE $BACKUP_RW ;
 if (( $? )); then

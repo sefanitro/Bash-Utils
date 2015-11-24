@@ -66,17 +66,23 @@ fi;
 # step 1: mv the oldest snapshot, to a temp directory
 # instead of descarting the old one, we will used to create the new one backup. Much faster than discarting and creating from zero.
 if [ -d $DESTDOCS/diari.2 ] ; then { $MV $DESTDOCS/diari.2 $DESTDOCS/diari.tmp ; } fi
+if [ -d $DESTDISK/diari.2 ] ; then { $MV $DESTDISK/diari.2 $DESTDISK/diari.tmp ; } fi
+
 
 # step 2: shift the middle snapshots(s) back by one, if they exist
 if [ -d $DESTDOCS/diari.1 ] ; then { $MV $DESTDOCS/diari.1 $DESTDOCS/diari.2 ; } fi
 if [ -d $DESTDOCS/diari.0 ] ; then { $MV $DESTDOCS/diari.0 $DESTDOCS/diari.1 ; } fi
+if [ -d $DESTDISK/diari.1 ] ; then { $MV $DESTDISK/diari.1 $DESTDISK/diari.2 ; } fi
+if [ -d $DESTDISK/diari.0 ] ; then { $MV $DESTDISK/diari.0 $DESTDISK/diari.1 ; } fi
 # step 2b: shit the old one to the new one.
 if [ -d $DESTDOCS/diari.tmp ] ; then { $MV $DESTDOCS/diari.tmp $DESTDOCS/diari.0 ; } fi
-
+if [ -d $DESTDISK/diari.tmp ] ; then { $MV $DESTDISK/diari.tmp $DESTDISK/diari.0 ; } fi
 
 # step 3: make a hard-link-only (except for dirs) copy of the latest snapshot,
 # if that exists
 if [ -d $DESTDOCS/diari.0 ] ; then { $CP -al $DESTDOCS/diari.1 $DESTDOCS/diari.0 ; } fi
+if [ -d $DESTDISK/diari.0 ] ; then { $CP -al $DESTDISK/diari.1 $DESTDISK/diari.0 ; } fi
+
 
 # step 4: rsync from the system into the latest snapshot (notice that
 # rsync behaves like cp --remove-destination by default, so the destination
@@ -89,10 +95,15 @@ $RSYNC --delete -av --delete-excluded --exclude-from="$EXCLUDES" $SOURCEDOCS $DE
 $ECHO $($DATE "+%b %d %H:%M:%S")'. Finalitzem el BACKUP setmanal de DOCS...' >> $FILELOGDOCS
 $ECHO '--------------------------------------------------' >> $FILELOGDOCS
 
+$ECHO '--------------------------------------------------' >> $FILELOGDISK
+$ECHO $($DATE "+%b %d %H:%M:%S")'. Iniciem el BACKUP setmanal de DISK...' >> $FILELOGDISK
+$RSYNC --delete -av --delete-excluded --exclude-from="$EXCLUDES" $SOURCEDISK $DESTDISK/setmanal.0 >> $FILELOGDISK 2>&1
+$ECHO $($DATE "+%b %d %H:%M:%S")'. Finalitzem el BACKUP setmanal de DISK...' >> $FILELOGDISK
+$ECHO '--------------------------------------------------' >> $FILELOGDISK
 
 # step 5: update the mtime of setmanal.0 to reflect the snapshot time
-$TOUCH $DESTDOCS/diari.0 ;
-
+$TOUCH $DESTDOCS/diari.0 
+$TOUCH $DESTDISK/diari.0 
 
 $MOUNT -o remount,ro $MOUNT_DEVICE $BACKUP_RW ;
 if (( $? )); then
