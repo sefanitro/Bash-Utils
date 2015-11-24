@@ -26,8 +26,9 @@ DESTPROGS=/BACKUP/Qprogs/
 FILELOGFOTOS=/var/log/rsync/rsyncFotos.log.$($DATE +%Y%m)
 FILELOGPROGS=/var/log/rsync/rsyncProgs.log.$($DATE +%Y%m)
 
-MOUNT_DEVICE=/dev/sdb3;
-BACKUP_RW=/BACKUP;
+MOUNT_DEVICE=/dev/sdb3
+BACKUP_RW=/BACKUP
+EXCLUDES=/usr/local/etc/backup_exclude
 
 #Make sure we are root
 if (( `$ID -u` != 0 )); then { $ECHO "Sorry, must be root.  Exiting..."; exit; } fi
@@ -54,14 +55,14 @@ fi;
 #Mirror SOURCE1 (FOTOS)
 $ECHO '--------------------------------------------------' >> $FILELOGFOTOS
 $ECHO $($DATE "+%b %d %H:%M:%S")'. Iniciem la sincronització de les Fotos...' >> $FILELOGFOTOS 
-$RSYNC --delete -avz $SOURCEFOTOS $DESTFOTOS >> $FILELOGFOTOS 2>&1
+$RSYNC --delete -av --delete-excluded --exclude-from="$EXCLUDES" $SOURCEFOTOS $DESTFOTOS >> $FILELOGFOTOS 2>&1
 $ECHO $($DATE "+%b %d %H:%M:%S")'. Finalitzem la sincronització de les Fotos...' >> $FILELOGFOTOS
 $ECHO '--------------------------------------------------' >> $FILELOGFOTOS
 
 #Mirror SOURCE2 (PROGS)
 $ECHO '--------------------------------------------------' >> $FILELOGPROGS
 $ECHO $($DATE "+%b %d %H:%M:%S")'. Iniciem la sincronització de PROGS...' >> $FILELOGPROGS
-$RSYNC --delete -avz $SOURCEPROGS $DESTPROGS >> $FILELOGPROGS 2>&1
+$RSYNC --delete -av --delete-excluded --exclude-from="$EXCLUDES" $SOURCEPROGS $DESTPROGS >> $FILELOGPROGS 2>&1
 $ECHO $($DATE "+%b %d %H:%M:%S")'. Finalitzem la sincronització de PROGS...' >> $FILELOGPROGS
 $ECHO '--------------------------------------------------' >> $FILELOGPROGS
 
