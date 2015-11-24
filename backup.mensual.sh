@@ -2,13 +2,13 @@
 #########################################################################
 # BACKUP Personal data based on Mike Rubel idea				#
 #									#
-# 4 FULL BACKUPs with hard links and minimum disk space usage.		#
-# Space usage is close to 1 Full BACKUP plus 3 diferential backups.	#
+# 3 FULL BACKUPs with hard links and minimum disk space usage.		#
+# Space usage is close to 1 Full BACKUP plus 2 diferential backups.	#
 # With hard links, all BACKUPS seems FULL BACKUPs. 			#
 # This script also recycles the oldest backup to create the new one,	#
 # reducing time creating the new one backup.				#
 #									#
-# You can use cron or anacron to run it periodically. 			#
+# This script should run montly.					#
 # Author: Sefanitro (sefanitro@ebrenginy.com)				#
 #########################################################################
 
@@ -64,15 +64,16 @@ fi;
 #Rotating backup based on Mikel Rubel idea per a QDOCS
 # step 1: mv the oldest snapshot, to a temp directory
 # instead of descarting the old one, we will used to create the new one backup. Much faster than discarting and creating from zero.
-if [ -d $DESTDOCS/setmanal.2 ] ; then { $RM -rf $DESTDOCS/setmanal.2 ; } fi
+if [ -d $DESTDOCS/mensual.2 ] ; then { $RM -rf $DESTDOCS/mensual.2 ; } fi
 
 # step 2: shift the middle snapshots(s) back by one, if they exist
-if [ -d $DESTDOCS/setmanal.1 ] ; then { $MV $DESTDOCS/setmanal.1 $DESTDOCS/setmanal.2 ; } fi
-if [ -d $DESTDOCS/setmanal.0 ] ; then { $MV $DESTDOCS/setmanal.0 $DESTDOCS/setmanal.1 ; } fi
+if [ -d $DESTDOCS/mensual.1 ] ; then { $MV $DESTDOCS/mensual.1 $DESTDOCS/mensual.2 ; } fi
+if [ -d $DESTDOCS/mensual.0 ] ; then { $MV $DESTDOCS/mensual.0 $DESTDOCS/mensual.1 ; } fi
+
 
 # step 3: make a hard-link-only (except for dirs) copy of the latest snapshot,
 # if that exists
-if [ -d $DESTDOCS/diari.2 ] ; then { $CP -al $DESTDOCS/diari.2 $DESTDOCS/setmanal.0 ; } fi
+if [ -d $DESTDOCS/setmanal.2 ] ; then { $CP -al $DESTDOCS/setmanal.2 $DESTDOCS/mensual.0 ; } fi
 
 $MOUNT -o remount,ro $MOUNT_DEVICE $BACKUP_RW ;
 if (( $? )); then
